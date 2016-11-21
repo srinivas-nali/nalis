@@ -1,0 +1,302 @@
+#Webcrawler for pulling all links from all pages of the nest PAW
+
+#imports required libraries
+import re
+import urllib2
+import socket
+from openpyxl import Workbook
+from httplib import BadStatusLine
+import urlfetch
+
+#enter testbed username and password in the line below
+proxy = urllib2.ProxyHandler({'https': 'https://tb.SNali:Chandu345*@tb-tmg-0001:80'})
+auth = urllib2.HTTPBasicAuthHandler()
+opener = urllib2.build_opener(proxy, auth, urllib2.HTTPHandler)
+urllib2.install_opener(opener)
+
+noproxy = urllib2.ProxyHandler(proxies = None)
+opener1 = urllib2.build_opener(noproxy, auth, urllib2.HTTPHandler)
+#urllib2.install_opener(opener1)
+
+
+#List of external sites that are excluded from being crawled(they are still visited to check that they exist and for redirects.
+EXTLIST = []
+EXTLISTF = open(("ExternalLinksJUAT.txt"),'w')
+
+t = 1
+Parent = 'https://tcsuatsw/schemeweb/NestWeb/public/home/contents/homepage.html'
+ROOT = 'https://tcsuatsw/'
+
+Child = Parent
+#temporary print
+print 'first child link -->>' + Child
+
+TEMP1 = urllib2.Request(Child)
+
+#temporary print
+print 'TEMP1 link -->>' + str(TEMP1)
+
+TEMP2 = urllib2.urlopen(TEMP1)
+
+#temporary print
+print 'TEMP2 link -->>' + TEMP2
+
+#TEMP2 = opener1.open(urllib2.Request(TEMP1))
+
+ActualChild = TEMP2.geturl()
+EnhancedChild = Child
+Status = "1"
+RedirectCode = str(TEMP2.getcode())
+
+#Array for storing individual details for a page.
+page = [Parent,Child,EnhancedChild,ActualChild,RedirectCode,Status]
+images = [['Parent', 'Child','Extended','Actual','HTTP Code','Unique?']]
+#Array for storing each page as an individual entry    
+pages = [['Parent', 'Child','Extended','Actual','HTTP Code','Unique?'],page]
+COUNT = len(pages)
+#TEMPF = open(("LinksTMPself2H.txt"),'w')
+ErrorF = open(("LinksError2I2UAT.txt"),'w')
+
+
+
+def isExt(P1):
+        if (((P1[0:8] == 'https://') or (P1[0:7] == 'http://')) and ((P1[8:16] !='tcsuatsw') and (P1[7:15] != 'tcsuatsw') and P1[12:26] !='nestpensions.o' and P1[11:25] !='nestpensions.o')):
+                EXTLIST.append(P1)
+                return True
+        else:
+                return False
+
+def ActualPage(CHILD, P3):
+    AP = ""
+    if isExt(CHILD)== False:
+        try:
+            AP = (urllib2.urlopen(urllib2.Request(P3))).geturl()
+        except Exception:
+            pass
+    else:
+        try:
+            AP = (opener1.open(urllib2.Request(P3))).geturl()
+        except Exception:
+            pass
+    return AP
+
+def RedirectedCode(CHILD, P4):
+    RC = ""
+    if isExt(CHILD)== False:
+        try:
+            RC = str((urllib2.urlopen(urllib2.Request(P4))).getcode())
+        except Exception, E:
+            RC = E
+    else:
+        try:
+            RC = urlfetch.get(L).status
+        except Exception, E:
+            RC = E
+    return RC
+
+def Enhance(CHILD,PARENT,LINK,LinksI):
+    if ('maiLINKto' or '\n' or '<')  not in LinksI:
+        if CHILD[:4] == ' ../':
+            while CHILD[:4] == ' ../':
+                CHILD = CHILD.partition('/')[2]
+                PARENT = PARENT.rpartition('/')[0]
+            LINK = PARENT + '/' + CHILD
+            if CHILD[:3] == '../':
+                while CHILD[:3] == '../':
+                    CHILD = CHILD.partition('/')[2]
+                    PARENT = PARENT.rpartition('/')[0]
+                PARENT = PARENT.rpartition('/')[0]
+                LINK = PARENT + '/' + CHILD
+        elif CHILD[:3] == '../':
+                if ((PARENT != ROOT) and ((PARENT + '/') != ROOT)):
+                        while CHILD[:3] == '../':
+                                CHILD = CHILD.partition('/')[2]
+                                PARENT = PARENT.rpartition('/')[0]
+                        PARENT = PARENT.rpartition('/')[0]
+                        LINK = PARENT + '/' + CHILD
+                else:
+                        while CHILD[:3] == '../':
+                                CHILD = CHILD.partition('/')[2]
+                        LINK = PARENT + '/' + CHILD
+        elif CHILD[:2] == './':
+            while CHILD[:2] == './':
+                CHILD = CHILD.partition('/')[2]
+                PARENT = PARENT.rpartition('/')[0]
+            LINK = PARENT + '/' + CHILD
+        elif str(CHILD[0]) == '/':
+                if LinksI[0] == '/':
+                        LinksI = LinksI[1:]
+                LINK = ROOT + LinksI#ROOT.rpartition('/')[0] + LinksI
+                #print LINK
+        elif str(CHILD[0]) == '#':
+            LINK = PARENT + LinksI
+        elif isExt(CHILD)!= True  and re.match('[A-Za-z0-9]',CHILD[0]) and CHILD[0] !=' ' and CHILD[:7]!='http://' and CHILD[:8]!= 'https://' and CHILD[:4]!='www.' and CHILD[:6]!='mailto':
+            LINK = PARENT.rpartition('/')[0] + '/' + LinksI
+        if '&amp;' in LINK:
+                LINK = LINK.partition('&amp;')[0] + '&' + LINK.partition('&amp;')[2]
+        if LINK.partition('//')[0]=='https:':
+                LINK = 'http' + LINK.rpartition('https')[2]
+    return LINK
+
+
+def toSkip(P2):
+        if '\"' in P2:
+            return True
+        elif '#' in P2:
+            return True
+        elif 'JavaScript' in P2:
+            return True
+        elif 'javascript' in P2:
+            return True
+        elif 'mailto' in P2:
+            return True
+        elif '\n' in P2:
+            return True
+        elif '<' in P2:
+            return True
+        elif '.css' in P2:
+            return True
+        elif '.pdf' in P2:
+            return True
+        elif '.zip' in P2:
+            return True
+        elif '.ppt' in P2:
+            return True
+        else:
+            return False
+
+
+
+
+while t < COUNT:
+        if pages[t][5] == '1':
+                visit = pages[t][2]
+                loopNO = t
+                if isExt(visit)==True:
+                        t += 1
+                        continue
+                if toSkip(visit) == True:
+                        t += 1
+                        continue
+                #TEMPF.write("loop no: "+str(loopNO)+"\n"+"visit is-->>  "+str(visit)+"\n")
+                try:
+                        links = re.findall('href=[\"\'](.[^\"\']+)[\"\']', urllib2.urlopen(visit).read(), re.I)
+                        #image = re.findall('<img([^>]*)src=[\"\'](.[^\"\']+)[\"\']', urllib2.urlopen(visit).read(), re.I)
+                except Exception, E1 : 
+                        t += 1
+                        ErrorF.write("loop no: "+str(loopNO)+"\n"+"Crawling of the Visit skipped due to "+str(E1)+" on" + str(visit)+"\n\n")
+                        continue
+                i = 0
+                # BELOW each item in "links" list will be appended to "pages" list after checking the unique presence
+                while i < len(links):
+                        j = 0
+                        while j < len(pages):
+                                RC = ""
+                                AP = ""
+                                P = visit
+                                C = links[i]
+                                L = C
+                                if pages[j][1]==links[i]:
+                                        L = Enhance(C,P,L,links[i])
+                                        AP = ActualPage(C, L)
+                                        RC = RedirectedCode(C,L)
+                                        pages.append([visit,links[i],L,AP,RC,'0'])
+                                        break
+                                if j == len(pages)-1:
+                                        L = Enhance(C,P,L,links[i])
+                                        AP = ActualPage(C, L)
+                                        RC = RedirectedCode(C,L)
+                                        pages.append([visit,links[i],L,AP,RC,'1'])
+                                        break
+                                j += 1
+                        i += 1
+                #k = 0    
+                # BELOW each item in "links" list will be appended to "pages" list after checking the unique presence
+                #images commented out
+                """while k < len(image):
+                        m = 0
+                        while m < len(images):
+                                RC = ""
+                                AP = ""
+                                P = visit
+                                C = image[k][len(image[k])-1]
+                                L = C
+                                if images[m][1]==image[k][len(image[k])-1]:
+                                        L = Enhance(C,P,L,image[k][len(image[k])-1])
+                                        AP = ActualPage(C, L)
+                                        RC = RedirectedCode(C,L)
+                                        images.append([visit,image[k][len(image[k])-1],L,AP,RC,'0'])
+                                        break
+                                if m == len(images)-1:
+                                        L = Enhance(C,P,L,image[k][len(image[k])-1])
+                                        AP = ActualPage(C, L)
+                                        RC = RedirectedCode(C,L)
+                                        images.append([visit,image[k][len(image[k])-1],L,AP,RC,'1'])
+                                        break
+                                m += 1
+                        k += 1"""
+        COUNT = len(pages)
+        t += 1
+        #if statement added due to oversized outputs
+        if t % 200 == 0:
+                print 'loop '+ str(t) + ' complete'
+                
+
+
+
+book = Workbook()                       # new library for xlsx
+sheet1 = book.active                    # new methods of xlsx library
+sheet1.title = "Links"          
+
+
+#images commented out
+#sheet2 = book.add_sheet('Images')
+
+# below writing the pages values into an excel sheet
+# x 0 is the parent or Crawling Page
+# x 1 is the child-link for x 0
+# x 2 is the enhanced-child-link for x 1
+# x 3 is the actual-child-link for x 2
+# x 4 is the redirected code when x 2 is opened as x 3
+# x 5 is either 1 - which means child-link is unique/1st time added or 0 - which means child-link is already added/ duplicate
+print 'Length of pages: ' + str(len(pages))
+
+
+for x in range (1, len(pages)+1):
+        for j in range (1, 6):
+                d = sheet1.cell(row = x , column = j)
+                d.value = (str(pages[x-1][j-1])).decode('utf-8')
+
+
+
+
+#sheet1.write(x,1,(str(pages[x][1])).decode('utf-8'))
+#sheet1.write(x,2,(str(pages[x][2])).decode('utf-8'))
+#sheet1.write(x,3,(str(pages[x][3])).decode('utf-8'))
+#sheet1.write(x,4,(str(pages[x][4])).decode('utf-8'))
+#sheet1.write(x,5,(str(pages[x][5])).decode('utf-8'))
+
+
+
+
+#images commented out
+"""
+for x in range(len(images)):
+    sheet2.write(x,0,str(images[x][0]))
+    sheet2.write(x,1,str(images[x][1]))
+    sheet2.write(x,2,str(images[x][2]))
+    sheet2.write(x,3,str(images[x][3]))
+    sheet2.write(x,4,str(images[x][4]))
+    sheet2.write(x,5,str(images[x][5]))
+"""
+XFNAME = 'LinksLISTJ-UAT' + str(COUNT)+ '.xlsx'
+book.save(XFNAME)
+el = 0
+while el < len(EXTLIST):
+        EXTLISTF.write(str(el+1)+"  "+str(EXTLIST[el])+"\n")
+        el += 1
+        
+
+#TEMPF.close()
+EXTLISTF.close()
+ErrorF.close()
