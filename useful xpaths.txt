@@ -1,0 +1,171 @@
+
+
+//*[@id='managePayments:table:tbody_element']/*[contains(.,'Due')]//*[contains(@id,'viewDetailsId')][position()=1]
+=================================================
+25/04/2014
+=================================================
+
+
+<div style="display:block;">
+<div class="error_box_main">
+<p> The file upload has failed because the uploaded file is not in acceptable format. Please upload files which are of .csv format only.</p>
+</div>
+
+
+
+<ul class="error_box_main">
+<li>The employer reference number in the file header is wrong. Please correct this and upload the file again.</li>
+</ul>
+
+
+
+<div class="error_box_sub" style="display:block;">
+<p class="bolder clear_right">
+5 records in this file have errors. You can either correct the record in the file and resubmit it later or
+<a id="fileUpload:memberFileUpload_make_multiple_error_correction_id" title="make an online correction now" onclick="return jsf.util.chain(document.getElementById('fileUpload:memberFileUpload_make_multiple_error_correction_id'), event,'ntptEventTag(\'ev=EE_memberFileUpload_link_makeanonlinecorrectionnow\');', 'return oamSubmitForm(\'fileUpload\',\'fileUpload:memberFileUpload_make_multiple_error_correction_id\');');" href="#"> make an online correction now</a>
+.
+</p>
+</div>
+
+
+
+--->> xpath for the text for all above texts is
+
+//*[contains(@class,"error")]/*[contains(text(),"")]
+
+
+
+
+=================================================
+25/04/2014
+=================================================
+<div class="main_info_row roundedcorner2">
+<div class="name_field">XXREG111BS</div>
+<div class="optout_card" style="display:block">
+<div class="optout_card" style="display:none">
+<div>
+<span class="float_right cntrl_right_button">
+<input id="select:multipleEmployerPageForOptOutId:0:mul_emp_but_id" class="button_white1" type="submit" title="Opt out for XXREG111BS" value="Opt out" name="select:multipleEmployerPageForOptOutId:0:mul_emp_but_id">
+</span>
+</div>
+
+
+to find out the Opt-out button corresponding to the business below is the XPATH --->>
+
+
+//div[contains(.,"XXREG111BS")]//input[contains(@id,"mul_emp") and contains(@title,"XXREG111BS")]
+=================================================
+04/06/2014
+=================================================
+
+<table id="managePayments:table" class="table_cont_shedule exptnschedules contrisch" border="1">
+<thead>
+<tbody id="managePayments:table:tbody_element">
+<tr class="odd">
+<tr class="even">
+<td class="status rounded_tl">
+<td class="">2 Jun 2014</td>
+<td class="">
+<td class="">Monthly</td>
+<td class="">2 May - 1 Jun 2014</td>
+<td class="details txtcenter rounded_tr">
+<input id="managePayments:table:1:viewDetailsId" class="button_detail txtcenter" type="submit" title="Edit/Pay Direct Debit for 2 May - 1 Jun 2014" onclick="var cf = function(){ntptEventTag('ev=CNR_managePaymentsContent_edit_editpay');};var oamSF = function(){};return (cf.apply(this, [])==false)? false : oamSF.apply(this, []); " value=" " name="managePayments:table:1:viewDetailsId"/>
+</td>
+</tr>
+<tr class="odd">
+<tr class="even">
+<td class="status rounded_tl">
+<td class="">2 Jul 2014</td>
+<td class="">
+<td class="">Monthly</td>
+<td class="">2 Jun - 1 Jul 2014</td>
+<td class="details txtcenter rounded_tr">
+<input id="managePayments:table:3:viewDetailsId" class="button_detail txtcenter" type="submit" title="Edit/Pay Direct Debit for 2 Jun - 1 Jul 2014" onclick="var cf = function(){ntptEventTag('ev=CNR_managePaymentsContent_edit_editpay');};var oamSF = function(){};return (cf.apply(this, [])==false)? false : oamSF.apply(this, []); " value=" " name="managePayments:table:3:viewDetailsId"/>
+</td>
+
+
+
+to get the buttons which has Deirect Debit below is the xpath used
+
+//table[contains(@id,\"managePayments\")]//input[contains(@id,\"viewDetailsId\") and contains(@title,\"Direct Debit\")]
+
+=================================================
+30/06/2014
+=================================================
+
+<tbody id="tpaHomePage:empResultTable1Id:tbody_element">
+<tr class="odd">
+<td class="rounded_tl employer">
+<div class="name_field">
+<span>81ZZ283BS </span>
+</div>
+</td>
+<td class="nestID">EMP010000453</td>
+<td class="view txtright rounded_tr">
+<span class=" ">
+<a id="tpaHomePage:empResultTable1Id:0:selectnestLinkId" class="button_detail" title="Select for EMP010000453" onclick="return jsf.util.chain(document.getElementById('tpaHomePage:empResultTable1Id:0:selectnestLinkId'), event,'ntptEventTag(\'ev=TPA_TPAHomePage_action_view\')', 'return oamSubmitForm(\'tpaHomePage\',\'tpaHomePage:empResultTable1Id:0:selectnestLinkId\');');" href="#"></a>
+</span>
+</td>
+</tr>
+<tr class="even">
+<td class="rounded_tl employer">
+<td class="nestID">EMP010000479</td>
+<td class="view txtright rounded_tr">
+<span class=" ">
+<a id="tpaHomePage:empResultTable1Id:1:selectnestLinkId" class="button_detail" title="Select for EMP010000479" onclick="return jsf.util.chain(document.getElementById('tpaHomePage:empResultTable1Id:1:selectnestLinkId'), event,'ntptEventTag(\'ev=TPA_TPAHomePage_action_view\');voidf(\'ev=TPA_TPAHomePage_action_view\')', 'return oamSubmitForm(\'tpaHomePage\',\'tpaHomePage:empResultTable1Id:1:selectnestLinkId\');');" href="#"></a>
+</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+to get the id, below is the XPATH
+
+
+
+//*[@id='tpaHomePage:empResultTable1Id:tbody_element']/*[contains(.,'81ZZ283')]//*[contains(@id,'selectnestLinkId')]
+
+
+
+=================================================
+22/09/2014
+=================================================
+
+Error message for a page, capturing all in one command
+
+//div[contains(@class,"error")]/p
+//P[contains(@class,"error")]
+
+
+
+=================================================
+05/01/2015
+=================================================
+<input id="createPaymentSource:table:1:data_editId" class="button_white2" type="submit" title="Edit information for the payment source 91ZZ500PS2" onclick="var cf = function(){ntptEventTag('ev=EP_createPaymentSource_action_edit');voidf('ev=EP_createPaymentSource_action_edit');};var oamSF = function(){};return (cf.apply(this, [])==false)? false : oamSF.apply(this, []); " value="Edit" name="createPaymentSource:table:1:data_editId"/>
+
+Edit button for each payment source has the above tag, so finding the right edit button for right payment source is as below
+
+//input[contains(@id,"data_editId") and contains(@title,"91ZZ500PS2")]
+
+
+
+
+=================================================
+21/01/2015
+=================================================
+
+<p class="clear_both">
+<span class="radioindent">
+<input id="employerRoleUpdate:addAnotherContriSrcTable:0:employerRoleUpdate_paymentSourceCmbId" class="radio_check_align" type="checkbox" value="true" name="employerRoleUpdate:addAnotherContriSrcTable:0:employerRoleUpdate_paymentSourceCmbId"/>
+<label class="default_label" for="employerRoleUpdate:addAnotherContriSrcTable:0:employerRoleUpdate_paymentSourceCmbId">
+<span id="employerRoleUpdate:addAnotherContriSrcTable:0:createNewUser_paymentSrcId">91ZZ435PS1</span>
+</label>
+</span>
+</p>
+
+
+to pick the check box for the right payment source below is the xpath
+//label/span[contains(text(),"91ZZ")]/../../input[contains(@id,"paymentSourceCmbId")]
+
